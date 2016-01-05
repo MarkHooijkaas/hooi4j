@@ -65,6 +65,17 @@ public abstract class ImmutableSequence<T> implements TypedSequence<T>, RandomAc
 		}
 		return this;
 	}
+	public ImmutableSequence<T> removeItem(T itemToRemove) { // TODO: remove all for a key?
+		if (itemToRemove==null)
+			return this;
+		int index=0;
+		for (T item: this) {
+			if (itemToRemove.equals(item))
+				return remove(index);
+			index++;
+		}
+		return this;
+	}
 
 	
 	
