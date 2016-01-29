@@ -4,6 +4,7 @@ public class CallInfo {
 	public String user=null;
 	public String action=null;
 	public String data=null;
+	public String ip=null;
 	public void clear() {
 		user=null;
 		action=null;
