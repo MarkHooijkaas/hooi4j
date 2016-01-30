@@ -5,10 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.kisst.item4j.Immutable;
 import org.kisst.item4j.ImmutableSequence;
 import org.kisst.item4j.Item;
-import org.kisst.item4j.seq.ItemSequence;
 import org.kisst.item4j.struct.Struct.FieldHasNullValueException;
 import org.kisst.item4j.struct.Struct.UnknownFieldException;
 
@@ -96,18 +94,13 @@ public class StructHelper {
 		if (obj==null) return defaultValue;
 		return Item.asStruct(obj);
 	}
-	public static ItemSequence getSequence(Struct data, String path, ItemSequence defaultValue) {
-		Object obj= getObject(data,path,null); 
-		if (obj==null) return defaultValue;
-		return Item.asItemSequence(obj);
-	}
-	public static<T> ImmutableSequence<T> getTypedSequence(Struct data, Item.Factory factory, Class<?> type, String path, ImmutableSequence<T> defaultValue) { 
+	public static<T> ImmutableSequence<T> getTypedSequence(Struct data, Item.Factory factory, Class<T> type, String path, ImmutableSequence<T> defaultValue) { 
 		Object obj= getObject(data,path,null); 
 		if (obj==null) return defaultValue;
 		return Item.asTypedSequence(factory, type,getObject(data,path));  
 	} 
 	public static<T> ImmutableSequence<T> getTypedSequenceOrEmpty(Struct data, Item.Factory factory, Class<T> type, String path) {
-		return Item.cast(getTypedSequence(data,factory, type, path, ImmutableSequence.EMPTY));
+		return getTypedSequence(data,factory, type, path, Item.cast(ImmutableSequence.EMPTY));
 	}
 
 
@@ -145,7 +138,6 @@ public class StructHelper {
 	public static Instant getInstant(Struct data, String path) { return Item.asInstant(getObject(data,path)); }
 	public static<T> T getType(Struct data, Item.Factory factory, Class<?> cls, String path) { return Item.asType(factory, cls,getObject(data,path)); }
 	public static Struct getStruct(Struct data, String path) { return Item.asStruct(getObject(data,path)); } 
-	public static Immutable.ItemSequence getItemSequence(Struct data, String path) { return Item.asItemSequence(getObject(data,path)); } 
-	public static<T> ImmutableSequence<T> getTypedSequence(Struct data, Item.Factory factory, Class<?> type, String path) { return Item.asTypedSequence(factory, type,getObject(data,path)); } 
+	public static<T> ImmutableSequence<T> getTypedSequence(Struct data, Item.Factory factory, Class<T> type, String path) { return Item.asTypedSequence(factory, type,getObject(data,path)); } 
 
 }

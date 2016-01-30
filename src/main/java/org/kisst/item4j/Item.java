@@ -6,39 +6,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.kisst.item4j.seq.ItemSequence;
 import org.kisst.item4j.seq.TypedSequence;
 import org.kisst.item4j.struct.MapStruct;
 import org.kisst.item4j.struct.ReflectStruct;
 import org.kisst.item4j.struct.Struct;
 import org.kisst.util.ReflectionUtil;
 
-public interface Item {
-	public static <T> T cast(Object obj){ return Type.cast(obj); } 
+public class Item {
+	@SuppressWarnings("unchecked") public static <T> T cast(Object obj){ return (T) obj; } 
 
-	public Object asObject(); // { return this; }
-	default public Struct asStruct() { return asStruct(asObject()); }
-	default public String asString() { return asString(asObject()); }
-	default public int asInteger() { return asInteger(asObject()); }
-	default public long asLong() { return asLong(asObject()); }
-	default public short asShort() { return asShort(asObject()); }
-	default public byte asByte() { return asByte(asObject()); }
-	default public float asFloat() { return asFloat(asObject()); }
-	default public double asDouble() { return asDouble(asObject()); }
-	default public boolean asBoolean() { return asBoolean(asObject()); }
-	default public <T> T asType(Factory factory, Class<T> cls) { return asType(factory, cls,asObject()); }
 	
 	public static String asString(Object obj) { 
 		if (obj==null || obj==ReflectionUtil.UNKNOWN_FIELD) return null; 
 		return obj.toString();
-	}
-	public static Item asItem(Object obj) { 
-		if (obj==null || obj==ReflectionUtil.UNKNOWN_FIELD) return null; 
-		if (obj instanceof Item) return (Item) obj;
-		return new Wrapper(obj);
 	}
 	public static Struct asStruct(Object obj) { 
 		if (obj==null || obj==ReflectionUtil.UNKNOWN_FIELD) return null; 
@@ -111,14 +93,8 @@ public interface Item {
 		return Instant.parse(asString(obj).trim());
 	}
 
-	public static Immutable.ItemSequence asItemSequence(Object obj) {
-		if (obj==null || obj==ReflectionUtil.UNKNOWN_FIELD) return null; 
-		if (obj instanceof ItemSequence) return Immutable.ItemSequence.smartCopy((ItemSequence) obj);
-		if (obj instanceof Collection)   return Immutable.ItemSequence.smartCopy((Collection<?>) obj);
-		throw new ClassCastException("Can not make a ItemSequence of type "+obj.getClass()+", "+obj);
-	}
 	@SuppressWarnings("unchecked")
-	public static <T> ImmutableSequence<T> asTypedSequence(Item.Factory factory, Class<?> type, Object obj) {
+	public static <T> ImmutableSequence<T> asTypedSequence(Item.Factory factory, Class<T> type, Object obj) {
 		if (obj==null || obj==ReflectionUtil.UNKNOWN_FIELD) return null; 
 		if (obj instanceof TypedSequence) return ImmutableSequence.smartCopy(factory, type,(TypedSequence<T>) obj);
 		if (obj instanceof Collection)   return ImmutableSequence.smartCopy(factory, type, (Collection<T>) obj);
@@ -150,58 +126,30 @@ public interface Item {
 		//if (cls.isAssignableFrom(obj.getClass()))
 		throw new IllegalArgumentException("Can not convert "+obj+" to "+cls);
 	}
-		
-	public class Wrapper implements Item {
-		private final Object obj;
-		public Wrapper(Object obj) {
-			if (obj==null)
-				throw new NullPointerException("Can not wrap null pointer");
-			this.obj=obj;
-		}
-		public Object asObject() { return obj; }
-	}
 	
 	
 	public interface Factory {
-		public default <T> T cast(Object obj){ return Type.cast(obj); } 
-		public <T> T construct(Class<?> cls, Struct data);
-		public <T> T construct(Class<?> cls, String data);
+		@SuppressWarnings("unchecked") default public <T> T cast(Object obj){ return (T) obj; } 
+		public <T> T construct(Class<?> cls, Object data);
 		
 		public final static BasicFactory basicFactory=new BasicFactory();
 		
 		public class BasicFactory implements Factory {
-			public<T> T construct(Class<?> cls, Struct data){
+			public<T> T construct(Class<?> cls, Object data){
 				Constructor<?> c = ReflectionUtil.getFirstCompatibleConstructor(cls, new Class<?>[]{data.getClass()});
 				if (c!=null)
 					return cast(ReflectionUtil.createObject(c, new Object[] {data}));
-				throw new IllegalArgumentException("Unknown Struct Constructor for class "+cls+" and data "+data);
-			}
-			public<T> T construct(Class<?> cls, String data){
-				Constructor<?> c = ReflectionUtil.getFirstCompatibleConstructor(cls, new Class<?>[]{String.class});
+				c = ReflectionUtil.getFirstCompatibleConstructor(cls, new Class<?>[]{this.getClass(), data.getClass()});
+				if (c!=null)
+					return cast(ReflectionUtil.createObject(c, new Object[] {this, data}));
+				c = ReflectionUtil.getFirstCompatibleConstructor(cls, new Class<?>[]{String.class});
 				if (c!=null)
 					return cast(ReflectionUtil.createObject(c, new Object[] {data}));
-				throw new IllegalArgumentException("Unknown String Constructor "+cls+" and data "+data);
-			}
-		}
-
-		public class MappedFactory extends BasicFactory {
-			public interface ConStructor { public Object ConStruct(Struct data); }
-			private final HashMap<Class<?>, ConStructor> constructors = new HashMap<Class<?>, ConStructor>(); 
-
-			public MappedFactory addClass(Class<?> cls, ConStructor c) { constructors.put(cls, c); return this;}
-
-			public <T> T construct(Class<?> cls, Struct data){
-				ConStructor c = constructors.get(cls);
+				c = ReflectionUtil.getFirstCompatibleConstructor(cls, new Class<?>[]{this.getClass(), String.class});
 				if (c!=null)
-					return cast(c.ConStruct(data));
-				return super.construct(cls, data);
+					return cast(ReflectionUtil.createObject(c, new Object[] {this, data}));
+				throw new IllegalArgumentException("Unknown Constructor "+cls+" for data "+data.getClass()+":"+data);
 			}
 		}
 	}
-	
-//	public static final DummyFactory dummyFactory=new DummyFactory();
-//	public static class DummyFactory implements Factory {
-//		public <T> T construct(Class<?> cls, Struct data) { throw new RuntimeException("Factory should not be needed"); }
-//		public <T> T construct(Class<?> cls, String data) { throw new RuntimeException("Factory should not be needed"); }
-//	}
 }

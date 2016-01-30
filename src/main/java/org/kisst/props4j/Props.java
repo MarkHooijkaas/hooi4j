@@ -19,18 +19,16 @@ along with the RelayConnector framework.  If not, see <http://www.gnu.org/licens
 
 package org.kisst.props4j;
 
-import org.kisst.item4j.Immutable;
-import org.kisst.item4j.ImmutableSequence;
-import org.kisst.item4j.Item;
-import org.kisst.item4j.seq.ItemSequence;
-import org.kisst.item4j.struct.ReflectStruct;
-import org.kisst.item4j.struct.Struct;
-import org.kisst.item4j.struct.StructProps;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import org.kisst.item4j.ImmutableSequence;
+import org.kisst.item4j.Item;
+import org.kisst.item4j.struct.ReflectStruct;
+import org.kisst.item4j.struct.Struct;
+import org.kisst.item4j.struct.StructProps;
 
 
 
@@ -143,14 +141,9 @@ public interface Props extends Struct {
 		if (obj==null) return defaultValue;
 		return Item.asStruct(obj);
 	}
-	default public ItemSequence getSequence(String path, ItemSequence defaultValue) {
+	default public<T> ImmutableSequence<T> getTypedSequence(Item.Factory factory, Class<T> type, String path, ImmutableSequence<?> defaultValue) {
 		Object obj= getObject(path,null);
-		if (obj==null) return defaultValue;
-		return Item.asItemSequence(obj);
-	}
-	default public<T> ImmutableSequence<T> getTypedSequence(Item.Factory factory, Class<?> type, String path, ImmutableSequence<T> defaultValue) {
-		Object obj= getObject(path,null);
-		if (obj==null) return defaultValue;
+		if (obj==null) return Item.cast(defaultValue);
 		return Item.asTypedSequence(factory, type, getObject(path));
 	}
 	default public<T> ImmutableSequence<T> getTypedSequenceOrEmpty(Item.Factory factory, Class<T> type, String path) {
@@ -193,8 +186,7 @@ public interface Props extends Struct {
 	default public Instant getInstant(String path) { return Item.asInstant(getObject(path)); }
 	default public<T> T getType(Item.Factory factory, Class<?> cls, String path) { return Item.asType(factory, cls, getObject(path)); }
 	default public Struct getStruct(String path) { return Item.asStruct(getObject(path)); }
-	default public Immutable.ItemSequence getItemSequence(String path) { return Item.asItemSequence(getObject(path)); }
-	default public<T> ImmutableSequence<T> getTypedSequence(Item.Factory factory, Class<?> type, String path) { return Item.asTypedSequence(factory, type, getObject(path)); }
+	default public<T> ImmutableSequence<T> getTypedSequence(Item.Factory factory, Class<T> type, String path) { return Item.asTypedSequence(factory, type, getObject(path)); }
 
 	default public Props getProps(String path) {
 		Object obj= getObject(path);

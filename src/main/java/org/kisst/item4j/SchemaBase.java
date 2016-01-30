@@ -11,40 +11,40 @@ import org.kisst.item4j.struct.Struct;
 public abstract class SchemaBase implements Schema {
 	
 	public class StringField extends BasicField<String>{ 
-		public StringField(String name) {	super(Type.javaString, name); }
+		public StringField(String name) {	super(String.class, name); }
 		public String getString(Struct s) { return Item.asString(s.getDirectFieldValue(name)); }
 		public String getString(Struct s, String defaultValue) { return Item.asString(getObject(s,defaultValue)); }
 	}
 	public class BooleanField extends BasicField<Boolean> {
-		public BooleanField(String name) { super(Type.javaBoolean, name); }
+		public BooleanField(String name) { super(Boolean.class, name); }
 		//public boolean getBoolean(Struct s, boolean defaultValue) { return Item.asBoolean(s.getDirectFieldValue(name)); }
 		public boolean getBoolean(Struct s) { return Item.asBoolean(s.getDirectFieldValue(name)); }
 		public boolean getBoolean(Struct s, boolean defaultValue) { return Item.asBoolean(getObject(s,defaultValue)); }
 	}
 	public class IntField extends BasicField<Integer> {
-		public IntField(String name) { super(Type.javaInteger, name); }
+		public IntField(String name) { super(Integer.class, name); }
 		public int getInt(Struct s) { return  Item.asInteger(s.getDirectFieldValue(name)); }
 		public int getInt(Struct s, int defaultValue) { return  Item.asInteger(getObject(s, defaultValue)); }
 	}
 	public class LongField extends BasicField<Long> { 
-		public LongField(String name) { super(Type.javaLong, name); }
+		public LongField(String name) { super(Long.class, name); }
 		public long getLong(Struct s) { return  Item.asLong(s.getDirectFieldValue(name)); }
 		public long getLong(Struct s, long defaultValue) { return  Item.asLong(getObject(s, defaultValue)); }
 	}
 	public class LocalDateField extends BasicField<LocalDate> { 
-		public LocalDateField(String name) { super(Type.javaLocalDate, name); }
+		public LocalDateField(String name) { super(LocalDate.class, name); }
 		public LocalDate getLocalDate(Struct s) { return  Item.asLocalDate(s.getDirectFieldValue(name,null)); }
 	}
 	public class LocalTimeField extends BasicField<LocalTime> { 
-		public LocalTimeField(String name) { super(Type.javaLocalTime, name); }
+		public LocalTimeField(String name) { super(LocalTime.class, name); }
 		public LocalTime getLocalTime(Struct s) { return  Item.asLocalTime(s.getDirectFieldValue(name,null)); }
 	}
 	public class LocalDateTimeField extends BasicField<LocalDateTime> { 
-		public LocalDateTimeField(String name) { super(Type.javaLocalDateTime, name); }
+		public LocalDateTimeField(String name) { super(LocalDateTime.class, name); }
 		public LocalDateTime getLocalDateTime(Struct s) { return  Item.asLocalDateTime(s.getDirectFieldValue(name,null)); }
 	}
 	public class InstantField extends BasicField<Instant> { 
-		public InstantField(String name) { super(Type.javaInstant, name); }
+		public InstantField(String name) { super(Instant.class, name); }
 		public Instant getInstant(Struct s) { return  Item.asInstant(s.getDirectFieldValue(name,null)); }
 		public Instant getInstantOrNow(Struct s) { 
 			Object obj = s.getDirectFieldValue(name);
@@ -56,18 +56,16 @@ public abstract class SchemaBase implements Schema {
 	}
 	@SuppressWarnings("rawtypes")
 	public class SequenceField<RT> extends BasicField<ImmutableSequence> {
-		private final Type<RT> elementType;
-		public SequenceField(Type<RT> type, String name) { 
-			super(new SequenceType<RT>(type) , name); // TODO: parser is null
-			this.elementType=type;
+		public final Class<RT> elementClass;
+		public SequenceField(Class<RT> elementClass, String name) { 
+			super(ImmutableSequence.class , name);
+			this.elementClass=elementClass;
 		} 
-		@SuppressWarnings("unchecked")
 		public ImmutableSequence<RT> getSequence(Item.Factory factory, Struct data) {
-			return (ImmutableSequence<RT>) Item.asTypedSequence(factory, elementType.getJavaClass(), data.getDirectFieldValue(name));
+			return (ImmutableSequence<RT>) Item.asTypedSequence(factory, elementClass, data.getDirectFieldValue(name));
 		}
-		@SuppressWarnings("unchecked")
 		public ImmutableSequence<RT> getSequenceOrEmpty(Item.Factory factory, Struct data) {
-			ImmutableSequence<RT> result = (ImmutableSequence<RT>) Item.asTypedSequence(factory, elementType.getJavaClass(), data.getDirectFieldValue(name,null));
+			ImmutableSequence<RT> result = (ImmutableSequence<RT>) Item.asTypedSequence(factory, elementClass, data.getDirectFieldValue(name,null));
 			if (result==null)
 				return Item.cast(ImmutableSequence.EMPTY);
 			return result;

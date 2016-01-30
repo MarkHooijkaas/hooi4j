@@ -15,11 +15,11 @@ public class ArraySequence<T> implements TypedSequence<T> {
 			this.array[i]=arr[i];
 	}
 	@SuppressWarnings("unchecked")
-	public ArraySequence(Item.Factory factory, Class<?> cls, ItemSequence seq) {
+	public ArraySequence(Item.Factory factory, Class<T> cls, TypedSequence<T> seq) {
 		this.cls=cls;
 		this.array=createArray(seq.size());
 		int i=0;
-		for (Object obj : seq.items())
+		for (Object obj : seq)
 			this.array[i++]=(T) Item.asType(factory, getElementClass(), obj);
 	}
 	public ArraySequence(Class<?> cls, List<T> list) {

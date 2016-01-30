@@ -2,8 +2,6 @@ package org.kisst.item4j.struct;
 
 import java.util.Iterator;
 
-import org.kisst.item4j.HasName;
-import org.kisst.item4j.Type;
 import org.kisst.util.ReflectionUtil;
 
 public interface Struct {
@@ -23,16 +21,6 @@ public interface Struct {
 			return defaultValue;
 		return result;
 	}
-	//public Object getObjectOrUnknownField(String name);
-	//public boolean hasField(String name);
-	
-	public interface Member<T> extends HasName {
-		public String getName();
-		public Type<T> getType();
-	}
-
-
-	
 	
 	public final static Struct EMPTY=new Struct() {
 		public final Iterable<String> fieldNames() { return new Iterable<String>() {

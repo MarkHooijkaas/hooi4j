@@ -1,13 +1,9 @@
 package test;
 
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.kisst.item4j.Immutable;
 
 public class Tests {
 	public static void main(String[] args) {
@@ -17,10 +13,11 @@ public class Tests {
 		for (Failure failure : result.getFailures()) 
 			System.out.println(failure.toString()+failure.getTrace());
 	}
+	/*
 	//Immutable.Sequence<Integer> seq = Immutable.sequence(Integer.class, 0,1,2,3,4,5,6,7,8,9);
 	//Immutable.Sequence<Integer> sub=seq.subsequence(5);
-	Immutable.ItemSequence seq = Immutable.items(0,1,2,3,4,5,6,7,8,9);
-	Immutable.ItemSequence sub=seq.subsequence(5);
+	ImmutableSequence seq = ImmutableSequence.of(0,1,2,3,4,5,6,7,8,9);
+	ImmutableSequence sub=seq.subsequence(5);
 
 	@Test public void immutableSequences() {
 		assertEquals("size", 10, seq.size());
@@ -37,7 +34,7 @@ public class Tests {
 	}
 
 	@Test public void join() {
-		Immutable.ItemSequence join=seq.join(sub,sub);
+		ZZZImmutableItemSequence.ZZZItemSequence join=seq.join(sub,sub);
 		assertEquals("size", 20, join.size());
 		assertEquals("seq[12]", 7, (int) join.get(12));
 		assertEquals("toFullString", "[0,1,2,3,4,5,6,7,8,9,5,6,7,8,9,5,6,7,8,9]", join.toFullString());
@@ -53,4 +50,6 @@ public class Tests {
 	
 	@Test(expected = IndexOutOfBoundsException.class)  
 	public void indexOutOfBounds() { seq.get(10);}
+	*/
+	
 }

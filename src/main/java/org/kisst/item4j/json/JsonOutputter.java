@@ -3,8 +3,7 @@ package org.kisst.item4j.json;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.kisst.item4j.Item;
-import org.kisst.item4j.seq.ItemSequence;
+import org.kisst.item4j.seq.TypedSequence;
 import org.kisst.item4j.struct.Struct;
 import org.kisst.util.StringUtil;
 
@@ -34,11 +33,11 @@ public class JsonOutputter {
 		}
 		out.write('}');
 	}
-	public void write(PrintWriter out, ItemSequence seq) {
+	public void write(PrintWriter out, TypedSequence<?> seq) {
 		out.write('[');
 		boolean firstElement=true;
 		for (int i=0; i<seq.size(); i++) {
-			Item value=seq.getItem(i);
+			Object value=seq.get(i);
 			if (! firstElement)
 				out.write(",\n");
 			
@@ -47,6 +46,7 @@ public class JsonOutputter {
 		}
 		out.write(']');
 	}
+	
 	public void write(PrintWriter out, Iterable<?> seq) {
 		out.write('[');
 		boolean firstElement=true;
@@ -64,12 +64,10 @@ public class JsonOutputter {
 		//System.out.println(value.getClass());
 		if (value==null)
 			return;
-		if (value instanceof Item)
-			value=((Item) value).asObject();
 		if (value instanceof Struct)
 			write(out,(Struct) value);
-		else if (value instanceof ItemSequence) {
-			write(out,(ItemSequence) value);
+		else if (value instanceof TypedSequence) {
+			write(out,(TypedSequence<?>) value);
 		}
 		else if (value instanceof Iterable) {
 			write(out,(Iterable<?>) value);

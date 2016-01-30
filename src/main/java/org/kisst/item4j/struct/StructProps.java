@@ -16,4 +16,10 @@ public class StructProps implements Struct, Props {
 
 	@Override public Props getParent() { return parent; }
 	@Override public String getLocalName() { return name; }
+
+	public static StructProps of(Struct data) {
+		if (data instanceof StructProps)
+			return (StructProps) data;
+		return new StructProps(data);
+	}
 }
