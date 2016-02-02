@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.RandomAccess;
 
 import org.kisst.item4j.seq.TypedSequence;
+import org.kisst.item4j.seq.TypedSequence.ReverseIteratable;
 
 
 public class ImmutableSequence<T> implements TypedSequence<T>, RandomAccess {
@@ -22,6 +23,8 @@ public class ImmutableSequence<T> implements TypedSequence<T>, RandomAccess {
 	@Override public int size() { return array.length; }
 	@Override public Object getObject(int index) { return array[index]; }
 	public Class<?> getElementClass() { return elementClass; }
+	// TODO: reverse shouldn't be needed, since it should use the default, but that didn;t work
+	public ReverseIteratable<T> reverse() { return new ReverseIteratable<>(this); } 
 
 
 	public ImmutableSequence<T> subsequence(int start, int end) { return new ImmutableSequence<T>(elementClass, Arrays.copyOfRange(array, start,end)); }

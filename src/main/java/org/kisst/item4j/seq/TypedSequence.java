@@ -10,6 +10,7 @@ public interface TypedSequence<T> extends Iterable<T>{
 	@SuppressWarnings("unchecked")
 	default public T get(int index) { return (T) getObject(index); }
 	default public Iterator<T> iterator() { return new IndexIterator<>(this); }
+	default public ReverseIteratable<T> reverse() { return new ReverseIteratable<>(this); }
 	
 	default public String toFullString() {
 		StringBuilder result=new StringBuilder("[");
@@ -17,7 +18,7 @@ public interface TypedSequence<T> extends Iterable<T>{
 		for (Object obj:this) { result.append(sep+obj); sep=","; }
 		return result.toString()+"]";
 	}
-	
+		
 	default void checkIndex(int index) {
 		if (index<0)
 			throw new IndexOutOfBoundsException("index "+index+" should be >=0");
@@ -25,12 +26,21 @@ public interface TypedSequence<T> extends Iterable<T>{
 			throw new IndexOutOfBoundsException("index "+index+" should be less or equal to size "+size());
 	}
 	
-	public final class IndexIterator<TT> implements Iterator<TT>{
-		private final TypedSequence<TT> seq;
+	public class IndexIterator<TT> implements Iterator<TT>{
+		protected final TypedSequence<TT> seq;
 		public IndexIterator(TypedSequence<TT> seq) { this.seq=seq; }
-		private int index=0;
+		protected int index=0;
 		@Override public boolean hasNext() { return index<seq.size();}
 		@Override public TT next() { return seq.get(index++); }
 		@Override public void remove() { throw new RuntimeException("remove is not allowed on this list"); }
+	}
+	public final class ReverseIteratable<TT>  implements Iterable<TT>{
+		private final TypedSequence<TT> seq;
+		public ReverseIteratable(TypedSequence<TT> seq) {this.seq=seq; }
+		@Override public Iterator<TT> iterator() { return new ReverseIterator<>(seq); }
+	}
+	public final class ReverseIterator<TT> extends IndexIterator<TT>{
+		public ReverseIterator(TypedSequence<TT> seq) {super(seq); }
+		@Override public TT next() { return seq.get(seq.size()-(++index)); }
 	}
 }
