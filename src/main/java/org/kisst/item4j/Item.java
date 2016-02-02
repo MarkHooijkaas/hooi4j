@@ -129,16 +129,15 @@ public class Item {
 	
 	
 	public interface Factory {
-		@SuppressWarnings("unchecked") default public <T> T cast(Object obj){ return (T) obj; } 
-		public <T> T construct(Class<?> cls, Object data);
+		public Object construct(Class<?> cls, Object data);
 		
 		public final static BasicFactory basicFactory=new BasicFactory();
 		
 		public class BasicFactory implements Factory {
-			public<T> T construct(Class<?> cls, Object data){
+			public Object construct(Class<?> cls, Object data){
 				Constructor<?> c = ReflectionUtil.getFirstCompatibleConstructor(cls, new Class<?>[]{data.getClass()});
 				if (c!=null)
-					return cast(ReflectionUtil.createObject(c, new Object[] {data}));
+					return ReflectionUtil.createObject(c, new Object[] {data});
 				c = ReflectionUtil.getFirstCompatibleConstructor(cls, new Class<?>[]{this.getClass(), data.getClass()});
 				if (c!=null)
 					return cast(ReflectionUtil.createObject(c, new Object[] {this, data}));
