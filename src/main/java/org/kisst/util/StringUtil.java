@@ -30,6 +30,8 @@ public class StringUtil {
 		s = s.replaceAll("[&]+", "+");
 		s = s.replaceAll("[^a-zA-Z0-9$_+.]+", "-");
 		s = s.replaceAll("[+-]*\\+[+-]*", "+");
+		s = s.replaceAll("^-", "");
+		s = s.replaceAll("-$", "");
 		return s;
 	}
 
