@@ -161,6 +161,29 @@ public class ReflectionUtil {
 		return null;
 	}
 
+	public static Method getFirstCompatibleMethod(Class<?> cls, String name, Class<?>[] signature) {
+		Method[] metharr = cls.getMethods();
+		//System.out.println("Looking for "+name);
+		//printSignature(signature);
+		//System.out.println("----");
+		for (Method meth :metharr) {
+			if (name.equals(meth.getName())) {
+				Class<?>[] paramtypes = meth.getParameterTypes();
+				if (paramtypes.length!=signature.length)
+					continue;
+				boolean compatible=true;
+				for (int j=0; j<signature.length; j++) {
+					if (!signature[j].isAssignableFrom(paramtypes[j]))
+						compatible=false;
+				}
+				if (compatible)
+					return meth;
+			}
+		}
+		return null;
+	}
+
+	
 	public static Constructor<?> getFirstCompatibleConstructor(Class<?> cls, Class<?>[] signature) {
 		Constructor<?>[] consarr = cls.getDeclaredConstructors();
 		for (int i=0; i<consarr.length; i++) {
@@ -180,10 +203,13 @@ public class ReflectionUtil {
 
 	public static Constructor<?> getConstructor(Class<?> cls, Class<?>[] signature) {
 		Constructor<?>[] consarr = cls.getDeclaredConstructors();
+		//for (Class<?> c: signature) { System.out.println(c.getName()+","); }
 		for (int i=0; i<consarr.length; i++) {
 			Class<?>[] paramtypes = consarr[i].getParameterTypes();
+			//for (Class<?> c: paramtypes) { System.out.println(c.getName()+","); }
 			if (java.util.Arrays.equals(signature, paramtypes))
 				return consarr[i];
+			//System.out.println("SKIPPED"); 
 		}
 		return null;
 	}

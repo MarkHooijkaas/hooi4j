@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.RandomAccess;
 
 import org.kisst.item4j.seq.TypedSequence;
-import org.kisst.item4j.seq.TypedSequence.ReverseIteratable;
 
 
 public class ImmutableSequence<T> implements TypedSequence<T>, RandomAccess {
@@ -19,6 +18,16 @@ public class ImmutableSequence<T> implements TypedSequence<T>, RandomAccess {
 		this.array=arr;
 	}
 	private ImmutableSequence(Class<T> cls, T[] arr) { this(Item.Factory.basicFactory, cls, arr); }
+	@Override public String toString() {
+		StringBuilder result= new StringBuilder();
+		String sep="[";
+		for (T e: array) {
+			result.append(sep+e);
+			sep=",";
+		}
+		result.append("]");
+		return result.toString();
+	}
 
 	@Override public int size() { return array.length; }
 	@Override public Object getObject(int index) { return array[index]; }

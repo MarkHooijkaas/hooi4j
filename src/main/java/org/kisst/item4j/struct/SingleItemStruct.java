@@ -16,9 +16,9 @@ public class SingleItemStruct implements Struct {
 	
 	@Override public String toString() { 
 		StringBuilder result=new StringBuilder(getClass().getSimpleName());
-		result.append('(');
+		result.append("({"+fieldName+":");
 		result.append(value);
-		result.append(')');
+		result.append("})");
 		return result.toString();
 	}
 	
