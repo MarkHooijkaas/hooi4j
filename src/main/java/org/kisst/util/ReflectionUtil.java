@@ -168,13 +168,17 @@ public class ReflectionUtil {
 		//System.out.println("----");
 		for (Method meth :metharr) {
 			if (name.equals(meth.getName())) {
+				//System.out.println("found name:"+meth.getName());
+
 				Class<?>[] paramtypes = meth.getParameterTypes();
 				if (paramtypes.length!=signature.length)
 					continue;
 				boolean compatible=true;
 				for (int j=0; j<signature.length; j++) {
-					if (!signature[j].isAssignableFrom(paramtypes[j]))
+					if (!signature[j].isAssignableFrom(paramtypes[j])) {
 						compatible=false;
+						//System.out.println("param "+j+" "+signature[j]+" not AssignableFrom "+paramtypes[j]);
+					}
 				}
 				if (compatible)
 					return meth;

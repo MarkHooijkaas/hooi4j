@@ -21,6 +21,10 @@ public interface Schema {
 		public BasicField(Class<FT> type, String name) { this.javaClass=type; this.name=name; }
 		
 		@Override public String getName() { return this.name; }
+		public boolean fieldExists(Struct data) { 
+			Object d=data.getDirectFieldValue(name);
+			return d!=null && d!=Struct.UNKNOWN_FIELD;
+		}
 		@Override public Object getObject(Struct data) { return data.getDirectFieldValue(name); }
 		public Object getObject(Struct data, Object defaultValue) {
 			Object result = data.getDirectFieldValue(name);
