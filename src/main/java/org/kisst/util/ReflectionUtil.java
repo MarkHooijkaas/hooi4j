@@ -175,9 +175,9 @@ public class ReflectionUtil {
 					continue;
 				boolean compatible=true;
 				for (int j=0; j<signature.length; j++) {
-					if (!signature[j].isAssignableFrom(paramtypes[j])) {
+					if (!paramtypes[j].isAssignableFrom(signature[j])) {
 						compatible=false;
-						//System.out.println("param "+j+" "+signature[j]+" not AssignableFrom "+paramtypes[j]);
+						//System.out.println("param "+j+" "+paramtypes[j]+" not AssignableFrom "+signature[j]);
 					}
 				}
 				if (compatible)
@@ -196,7 +196,7 @@ public class ReflectionUtil {
 				continue;
 			boolean compatible=true;
 			for (int j=0; j<signature.length; j++) {
-				if (!signature[j].isAssignableFrom(paramtypes[j]))
+				if (!paramtypes[j].isAssignableFrom(signature[j]))
 					compatible=false;
 			}
 			if (compatible)
@@ -217,7 +217,7 @@ public class ReflectionUtil {
 		}
 		return null;
 	}
-	
+
 	public static Object invoke(Object o, Method m, Object[] args) {
 		try {
 			m.setAccessible(true);
@@ -234,6 +234,14 @@ public class ReflectionUtil {
 			return invoke(o, c.getMethod(name, getSignature(args)), args);
 		}
 		catch (NoSuchMethodException e) { throw new ReflectionException(c, name, e); }
+	}
+
+
+	public static Object invokeFirstCompatibleMethod(Object o, String name, Object[] args) {
+		return invokeFirstCompatibleMethod(o.getClass(),o, name, args);
+	}
+	public static Object invokeFirstCompatibleMethod(Class<?> c, Object o, String name, Object[] args) {
+			return invoke(o, getFirstCompatibleMethod(c, name, getSignature(args)), args);
 	}
 
 	public static void printSignature(Class<?>[] sig) {
