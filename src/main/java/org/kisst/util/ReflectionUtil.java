@@ -241,7 +241,10 @@ public class ReflectionUtil {
 		return invokeFirstCompatibleMethod(o.getClass(),o, name, args);
 	}
 	public static Object invokeFirstCompatibleMethod(Class<?> c, Object o, String name, Object[] args) {
-			return invoke(o, getFirstCompatibleMethod(c, name, getSignature(args)), args);
+		Method meth = getFirstCompatibleMethod(c, name, getSignature(args));
+		if (meth==null)
+			throw new IllegalArgumentException("No such method "+name+" for class "+c.getName());
+		return invoke(o, meth, args);
 	}
 
 	public static void printSignature(Class<?>[] sig) {
