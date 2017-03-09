@@ -46,7 +46,8 @@ public abstract class SchemaBase implements Schema {
 	public class InstantField extends BasicField<Instant> { 
 		public InstantField(String name) { super(Instant.class, name); }
 		public Instant getInstant(Struct s) { return  Item.asInstant(s.getDirectFieldValue(name,null)); }
-		public Instant getInstantOrNow(Struct s) { 
+		public Instant getInstant(Struct s, Instant defaultValue) { return  Item.asInstant(s.getDirectFieldValue(name,defaultValue)); }
+		public Instant getInstantOrNow(Struct s) {
 			Object obj = s.getDirectFieldValue(name);
 			if (obj==null || obj==Struct.UNKNOWN_FIELD)
 				return Instant.now();
