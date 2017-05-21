@@ -80,6 +80,9 @@ public class Item {
 		String str = asString(obj).trim();
 		if (str==null || str.trim().length()==0)
 			return null;
+		// fix date with a . instead of a :
+		if (str.length()>2 && str.charAt(2)=='.')
+			str=str.substring(0,2)+":"+str.substring(3);
 		return LocalTime.parse(str);
 	}
 	public static LocalDateTime asLocalDateTime(Object obj) { 
